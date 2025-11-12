@@ -1,0 +1,169 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PatientData {
+  id               String        @id @default(uuid())
+  firstName        String        @map("first_name")
+  lastName         String        @map("last_name")
+  nationalIdentity String        @unique
+  dateBirth        String        @map("date_birth")
+  location         String?
+  gender           String
+  numberPhone      String?       @map("number_phone")
+  department       String?
+  province         String?
+  district         String?
+  bloodType        String?       @map("blood_type")
+  physicalHistory  String        @map("physical_history")
+  image            String?
+  job              String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  appointments     Appointment[]
+
+  @@index([firstName, lastName, nationalIdentity])
+}
+
+model Appointment {
+  id              String        @id @default(uuid())
+  appointmentDate DateTime      @map("appointment_date")
+  patientId       String
+  status          Boolean       @default(false)
+  totalServices   Float
+  servicesDesc    String[]
+  doctorId        String        @map("doctor_id")
+  doctor          DoctorData    @relation(fields: [doctorId], references: [id])
+  patient         PatientData   @relation(fields: [patientId], references: [id])
+  diagnostic      Diagnostic?
+  triage          Triage?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  payments        Payment[]
+  recipe          Recipe?
+  medicalTest     MedicalTest[]
+}
+
+model Triage {
+  id            String      @id @default(uuid())
+  weight        Decimal     @db.Decimal(5, 2)
+  height        Decimal     @db.Decimal(4, 2)
+  temperature   Decimal     @db.Decimal(4, 1)
+  heartRate     Float       @map("heart_rate")
+  ipss          Float?      @default(0)
+  bloodPressure String      @map("blood_pressure")
+  daysSick      Int         @default(0)
+  sature        Int         @default(0)
+  observations  String?     @default("")
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Payment {
+  id            String       @id @default(uuid())
+  typePayment   TYPEPAYMENT  @default(EFECTIVO) @map("type_payment")
+  typeVoucher   TYPEVOUCHER  @default(BOLETA) @map("type_voucher")
+  typeDocument  TYPEDOCUMENT @default(DOC) @map("type_document")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  appointmentId String       @map("appointment_id")
+  appointment   Appointment  @relation(fields: [appointmentId], references: [id])
+}
+
+model Diagnostic {
+  id            String      @id @default(uuid())
+  anamnesis     String      @map("anamnesis") @db.VarChar(500)
+  clinicalExam  String
+  diagnostic    String[]
+  observations  String?     @default("")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  appointmentId String      @unique @map("appointment_id")
+  doctorId      String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  doctor        DoctorData  @relation(fields: [doctorId], references: [id])
+  recipe        Recipe?
+}
+
+model MedicalTest {
+  id             Int         @id @default(autoincrement())
+  type           String
+  code           String?
+  status         String      @default("pending")
+  observations   String?     @default("")
+  resultText     String?
+  resultValue    Float?
+  referenceRange String?
+  testDate       DateTime?
+  deliveredAt    DateTime?
+  attachments    Json?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  appointmentId  String      @unique
+  doctorId       String
+  doctor         DoctorData  @relation(fields: [doctorId], references: [id])
+  appointment    Appointment @relation(fields: [appointmentId], references: [id])
+}
+
+model Recipe {
+  id            Int         @id @default(autoincrement())
+  observations  String?     @default("")
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  appointmentId String      @unique
+  diagnsticId   String      @unique
+  recipesDesc   Json[]
+  doctorId      String
+  doctor        DoctorData  @relation(fields: [doctorId], references: [id])
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  diagnostic    Diagnostic  @relation(fields: [diagnsticId], references: [id])
+}
+
+model DoctorData {
+  id              String        @id @default(uuid())
+  medicalRelation String        @ignore
+  cieCod          Int?
+  status          Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  userId          Int           @unique
+  appointment     Appointment[]
+  diagnostics     Diagnostic[]
+  recipes         Recipe[]
+  medicalTests    MedicalTest[]
+}
+
+enum TYPEVOUCHER {
+  BOLETA
+  FACTURA
+  NOTA_DE_VENTA
+}
+
+enum TYPEDOCUMENT {
+  DOC
+  RUC
+}
+
+enum TYPEPAYMENT {
+  EFECTIVO
+  TARJETA
+}
+
+enum CURRENCY {
+  PEN
+  USD
+}

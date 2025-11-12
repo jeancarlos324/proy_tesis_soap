@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<definitions name="AppointmentService"
+    targetNamespace="http://example.com/appointment"
+    xmlns:tns="http://example.com/appointment"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+
+    <message name="getAllRequest">
+        <part name="page" type="xsd:int" />
+        <part name="limit" type="xsd:int" />
+    </message>
+    <message name="getAllResponse">
+        <part name="appointments" type="xsd:string" />
+    </message>
+
+    <message name="getOneRequest">
+        <part name="id" type="xsd:string" />
+    </message>
+    <message name="getOneResponse">
+        <part name="id" type="xsd:string" />
+        <part name="patient" type="xsd:string" />
+        <part name="date" type="xsd:string" />
+    </message>
+
+    <portType name="AppointmentPort">
+        <operation name="getAll">
+            <input message="tns:getAllRequest" />
+            <output message="tns:getAllResponse" />
+        </operation>
+        <operation name="getOne">
+            <input message="tns:getOneRequest" />
+            <output message="tns:getOneResponse" />
+        </operation>
+    </portType>
+
+    <binding name="AppointmentBinding" type="tns:AppointmentPort">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+        <operation name="getAll">
+            <soap:operation soapAction="getAll" />
+            <input>
+                <soap:body use="encoded" namespace="urn:AppointmentService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:AppointmentService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <operation name="getOne">
+            <soap:operation soapAction="getOne" />
+            <input>
+                <soap:body use="encoded" namespace="urn:AppointmentService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:AppointmentService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+    </binding>
+
+    <service name="AppointmentService">
+        <documentation>Appointment management SOAP API</documentation>
+        <port name="AppointmentPort" binding="tns:AppointmentBinding">
+            <soap:address location="http://localhost:8000/soap/appointment" />
+        </port>
+    </service>
+
+</definitions>

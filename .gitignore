@@ -1,0 +1,9 @@
+node_modules
+.env
+.vscode.vscode/tasks.json
+postgresql
+dist
+src/generated
+prisma/migrations
+keys/**
+/src/generated/prisma

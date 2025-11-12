@@ -3,10 +3,43 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ",
+    "build": "tsc && tsc-alias",
+    "lint": "eslint .",
+    "start": "node ./dist/app.js",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "luxon": "^3.7.1",
+    "nodemon": "^3.1.10",
+    "picocolors": "^1.1.1",
+    "rrule": "^2.8.1",
+    "soap": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.1",
+    "@types/soap": "^0.18.0",
+    "@typescript-eslint/eslint-plugin": "^8.34.0",
+    "@typescript-eslint/parser": "^8.34.0",
+    "eslint": "^9.31.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "husky": "^8.0.3",
+    "prettier": "^3.5.3",
+    "pretty-quick": "^4.2.2",
+    "prisma": "^6.19.0",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.37.0"
+  }
 }
