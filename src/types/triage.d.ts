@@ -1,8 +1,6 @@
 import { IPagination } from './global';
 
-export interface ITriageParams extends IPagination {
-  patientId: string;
-}
+export interface ITriageParams extends IPagination {}
 export interface ITriageCreateForm {
   weight: number;
   height: number;
@@ -14,4 +12,8 @@ export interface ITriageCreateForm {
   sature: number;
   observations?: string;
   appointmentId: string;
+}
+
+export interface ITriageUpdateForm extends ITriageCreateForm {
+  id: string;
 }

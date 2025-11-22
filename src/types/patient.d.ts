@@ -38,3 +38,7 @@ export interface IPatientData {
   image?: string;
   job?: string;
 }
+
+export interface IPatientUpdateForm extends IPatientCreateForm {
+  id: string;
+}

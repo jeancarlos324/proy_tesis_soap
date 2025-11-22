@@ -10,6 +10,7 @@
         <part name="page" type="xsd:int" />
         <part name="limit" type="xsd:int" />
     </message>
+
     <message name="getAllResponse">
         <part name="appointments" type="xsd:string" />
     </message>
@@ -17,6 +18,7 @@
     <message name="getOneRequest">
         <part name="id" type="xsd:string" />
     </message>
+
     <message name="getOneResponse">
         <part name="id" type="xsd:string" />
         <part name="patient" type="xsd:string" />
@@ -61,7 +63,7 @@
     </binding>
 
     <service name="AppointmentService">
-        <documentation>Appointment management SOAP API</documentation>
+        <documentation>Appointment SOAP API</documentation>
         <port name="AppointmentPort" binding="tns:AppointmentBinding">
             <soap:address location="http://localhost:8000/soap/appointment" />
         </port>

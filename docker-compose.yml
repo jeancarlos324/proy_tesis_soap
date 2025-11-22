@@ -1,0 +1,13 @@
+services:
+  database:
+    image: postgres:17.0
+    restart: unless-stopped
+    container_name: db_sis_acad_ecomas
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data

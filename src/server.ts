@@ -1,6 +1,7 @@
 import http, { IncomingMessage, ServerResponse } from 'http';
 import { config } from 'dotenv';
 import pc from 'picocolors';
+import SoapPahMain from './core/soap.main';
 config();
 class Server {
   private httpServer!: http.Server;
@@ -31,11 +32,9 @@ class Server {
       } else {
         console.log(pc.bgRed(pc.white("Couldn't start server")));
       }
-      this.mountServices();
+      SoapPahMain.loader(this.httpServer);
     });
   }
-
-  private mountServices() {}
 }
 
 export default Server;

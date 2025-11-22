@@ -1,5 +1,6 @@
 {
     "conventionalCommits.scopes": [
         "app"
-    ]
+    ],
+    "prisma.pinToPrisma6": true
 }

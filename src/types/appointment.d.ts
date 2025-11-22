@@ -15,3 +15,8 @@ export interface IAppointmentCreateForm {
   servicesDesc: string[];
   doctorId: string;
 }
+
+export interface IAppointmentUpdateForm
+  extends Partial<IAppointmentCreateForm> {
+  id: string;
+}

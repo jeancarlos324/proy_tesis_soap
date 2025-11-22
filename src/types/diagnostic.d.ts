@@ -12,3 +12,7 @@ export interface IDiagnosticForm {
   appointmentId: string;
   doctorId: string;
 }
+
+export interface IDiagnosticUpdate extends Partial<IDiagnosticForm> {
+  id: string;
+}
