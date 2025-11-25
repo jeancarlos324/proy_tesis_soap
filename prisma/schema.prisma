@@ -18,7 +18,7 @@ model PatientData {
   id               String        @id @default(uuid())
   firstName        String        @map("first_name")
   lastName         String        @map("last_name")
-  nationalIdentity String        @unique
+  nationalIdentity String        @unique @map("national_identity")
   dateBirth        String        @map("date_birth")
   location         String?
   gender           String
