@@ -7,22 +7,30 @@ import { AppError } from '../core/AppError';
 
 export default class PatientService {
   private static prisma = prisma;
-  static getAll(args: IPatientParams) {
+  static async getAll(args: IPatientParams) {
+    const filters = [];
     const { offset, limit: take = 10, page } = args || {};
     const skip = ExpressUtils.pagination({ limit: take, offset, page });
-    const patients = this.prisma.patientData.findMany({
-      where: {
-        OR: [
-          { lastName: { contains: args.lastName, mode: 'insensitive' } },
-          { firstName: { contains: args.firstName, mode: 'insensitive' } },
-          {
-            nationalIdentity: {
-              contains: args.nationalIdentity,
-              mode: 'insensitive',
-            },
-          },
-        ],
-      },
+    if (args.lastName)
+      filters.push({
+        lastName: { contains: args.lastName, mode: 'insensitive' as const },
+      });
+
+    if (args.firstName)
+      filters.push({
+        firstName: { contains: args.firstName, mode: 'insensitive' as const },
+      });
+
+    if (args.nationalIdentity)
+      filters.push({
+        nationalIdentity: {
+          contains: args.nationalIdentity,
+          mode: 'insensitive' as const,
+        },
+      });
+
+    const patients = await this.prisma.patientData.findMany({
+      where: filters.length ? { OR: filters } : {},
       select: PatientQuery.getAll,
       take,
       skip,
@@ -30,7 +38,7 @@ export default class PatientService {
     return patients;
   }
   static async getOne(id: string) {
-    if (!id || RegexUtils.uuid(id)) throw new AppError('id is required', 400);
+    if (!RegexUtils.uuid(id)) throw new AppError('id is required', 400);
     const patient = await this.prisma.patientData.findUnique({
       where: { id },
       select: PatientQuery.getById,
@@ -38,10 +46,8 @@ export default class PatientService {
     return patient;
   }
 
-  static async create(data: IPatientCreateForm) {
-    const patient = await this.prisma.patientData.create({
-      data,
-    });
+  static async create({ patient: data }: IPatientCreateForm) {
+    const patient = await this.prisma.patientData.create({ data });
     return patient;
   }
 

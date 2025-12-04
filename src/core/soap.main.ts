@@ -10,13 +10,6 @@ import {
 } from '../schema';
 
 class SoapPahMain {
-  public static loader(httpServer: http.Server) {
-    for (const { route, wsdl, schema } of this.services) {
-      const wsdlFile = fs.readFileSync(wsdl, 'utf8');
-      soap.listen(httpServer, route, schema, wsdlFile);
-    }
-    console.log('Routes upload');
-  }
   private static get services() {
     return [
       {
@@ -24,22 +17,30 @@ class SoapPahMain {
         wsdl: path.join(__dirname, '../wsdl/appointment.wsdl'),
         schema: AppointmentSchema.schema,
       },
-      // {
-      //   route: '/soap/patients',
-      //   wsdl: path.join(__dirname, '../wsdl/patient.wsdl'),
-      //   schema: PatientSchema.schema,
-      // },
-      // {
-      //   route: '/soap/triages',
-      //   wsdl: path.join(__dirname, '../wsdl/triage.wsdl'),
-      //   schema: TriageSchema.schema,
-      // },
-      // {
-      //   route: '/soap/diagnostics',
-      //   wsdl: path.join(__dirname, '../wsdl/diagnostic.wsdl'),
-      //   schema: DiagnosticSchema.schema,
-      // },
+      {
+        route: '/soap/patients',
+        wsdl: path.join(__dirname, '../wsdl/patient.wsdl'),
+        schema: PatientSchema.schema,
+      },
+      {
+        route: '/soap/triages',
+        wsdl: path.join(__dirname, '../wsdl/triage.wsdl'),
+        schema: TriageSchema.schema,
+      },
+      {
+        route: '/soap/diagnostics',
+        wsdl: path.join(__dirname, '../wsdl/diagnostic.wsdl'),
+        schema: DiagnosticSchema.schema,
+      },
     ];
+  }
+
+  public static async loader(httpServer: http.Server) {
+    for (const { route, wsdl, schema } of this.services) {
+      const wsdlFile = fs.readFileSync(wsdl, 'utf8');
+      soap.listen(httpServer, route, schema, wsdlFile);
+    }
+    console.log('Routes upload');
   }
 }
 export default SoapPahMain;

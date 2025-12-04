@@ -12,7 +12,7 @@ class Server {
     this.httpServer = http.createServer(this.requestHandler.bind(this));
   }
 
-  private requestHandler(_req: IncomingMessage, res: ServerResponse) {
+  private async requestHandler(_req: IncomingMessage, res: ServerResponse) {
     this.setCORSHeaders(res);
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');

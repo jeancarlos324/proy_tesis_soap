@@ -1,20 +1,154 @@
 <?xml version="1.0"?>
-
-<definitions name="AppointmentService"
-    targetNamespace="http://example.com/appointment"
-    xmlns:tns="http://example.com/appointment"
+<definitions name="PatientService"
+    targetNamespace="http://example.com/Patient"
+    xmlns:tns="http://example.com/Patient"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
 
-    <portType name="PatientPort">
+    <types>
+        <xsd:schema targetNamespace="http://example.com/Patient">
+            <xsd:complexType name="Doctor">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:string" />
+                    <xsd:element name="cieCod" type="xsd:string" />
+                    <xsd:element name="status" type="xsd:boolean" />
+                    <xsd:element name="createdAt" type="xsd:string" minOccurs="0" nillable="true" />
+                    <xsd:element name="updatedAt" type="xsd:string" minOccurs="0" nillable="true" />
+                </xsd:sequence>
+            </xsd:complexType>
 
+            <xsd:complexType name="Appointment">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:string" />
+                    <xsd:element name="appointmentDate" type="xsd:dateTime" minOccurs="0"
+                        nillable="true" />
+                    <xsd:element name="patientId" type="xsd:string" />
+                    <xsd:element name="status" type="xsd:boolean" />
+                    <xsd:element name="totalServices" type="xsd:int" />
+                    <xsd:element name="doctorId" type="xsd:string" />
+                    <xsd:element name="createdAt" type="xsd:string" minOccurs="0" nillable="true" />
+                    <xsd:element name="updatedAt" type="xsd:string" minOccurs="0" nillable="true" />
+                    <xsd:element name="doctor" type="tns:Doctor" minOccurs="0" nillable="true" />
+                    <xsd:element name="diagnostic" type="xsd:string" minOccurs="0" nillable="true" />
+                    <xsd:element name="recipe" type="xsd:string" minOccurs="0" nillable="true" />
+                    <xsd:element name="triage" type="xsd:string" minOccurs="0" nillable="true" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="AppointmentList">
+                <xsd:sequence>
+                    <xsd:element name="appointment" type="tns:Appointment" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Patient">
+                <xsd:sequence>
+                    <xsd:element name="id" type="xsd:string" />
+                    <xsd:element name="firstName" type="xsd:string" />
+                    <xsd:element name="lastName" type="xsd:string" />
+                    <xsd:element name="nationalIdentity" type="xsd:string" />
+                    <xsd:element name="bloodType" type="xsd:string" />
+                    <xsd:element name="dateBirth" type="xsd:dateTime" />
+                    <xsd:element name="department" type="xsd:string" />
+                    <xsd:element name="district" type="xsd:string" />
+                    <xsd:element name="gender" type="xsd:string" />
+                    <xsd:element name="nationalIdentity" type="xsd:string" />
+                    <xsd:element name="physicalHistory" type="xsd:string" />
+                    <xsd:element name="job" type="xsd:string" />
+                    <xsd:element name="numberPhone" type="xsd:string" />
+                    <xsd:element name="location" type="xsd:string" />
+                    <xsd:element name="province" type="xsd:string" />
+                    <xsd:element name="createdAt" type="xsd:dateTime" />
+                    <xsd:element name="updatedAt" type="xsd:dateTime" />
+                    <xsd:element name="appointments" type="tns:AppointmentList" minOccurs="0"
+                        nillable="true" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="PatientList">
+                <xsd:sequence>
+                    <xsd:element name="patient" type="tns:Patient" minOccurs="0"
+                        maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+        </xsd:schema>
+    </types>
+    <!-- Request -->
+    <message name="getAllRequest">
+        <part name="page" type="xsd:int" />
+        <part name="limit" type="xsd:int" />
+    </message>
+    <message name='getOneRequest'>
+        <part name="id" type="xsd:string" />
+    </message>
+    <message name='createRequest'>
+        <part name="patient" type="tns:Patient" />
+    </message>
+    <!-- Responses -->
+    <message name="getAllResponse">
+        <part name="patients" type="tns:PatientList" />
+    </message>
+    <message name="getOneResponse">
+        <part name="patient" type="tns:Patient" />
+    </message>
+    <message name="createResponse">
+        <part name="createdPatient" type="tns:Patient" />
+    </message>
+
+
+    <portType name="PatientPort">
+        <!-- Get All Patient -->
+        <operation name="getAll">
+            <input message="tns:getAllRequest" />
+            <output message="tns:getAllResponse" />
+        </operation>
+        <!-- Get One Patient -->
+        <operation name="getOne">
+            <input message="tns:getOneRequest" />
+            <output message="tns:getOneResponse" />
+        </operation>
+        <!-- Create Patient -->
+        <operation name="create">
+            <input message="tns:createRequest" />
+            <output message="tns:createResponse" />
+        </operation>
     </portType>
+
+    <binding name="PatientBinding" type="tns:PatientPort">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+        <!-- Get All Patient -->
+        <operation name="getAll">
+            <soap:operation soapAction="getAll" />
+            <input>
+                <soap:body use="encoded" namespace="urn:PatientService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:PatientService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <!-- Get One Patient -->
+        <operation name="getOne">
+            <soap:operation soapAction="getOne" />
+            <input>
+                <soap:body use="encoded" namespace="urn:PatientService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:PatientService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+    </binding>
 
     <service name="PatientService">
         <documentation>Patient SOAP API</documentation>
         <port name="PatientPort" binding="tns:PatientBinding">
-            <soap:address location="http://localhost:8000/soap/patient" />
+            <soap:address location="http://localhost:8000/soap/Patient" />
         </port>
     </service>
+
 </definitions>

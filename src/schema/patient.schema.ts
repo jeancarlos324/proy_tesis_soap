@@ -1,4 +1,5 @@
 import { PatientHandler } from '../handler';
+import { IPatientParams } from '../types/patient';
 
 class PatientSchema {
   public static readonly SERVICE_NAME = 'PatientService';

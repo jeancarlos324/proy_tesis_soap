@@ -134,17 +134,15 @@ model Recipe {
 }
 
 model DoctorData {
-  id              String        @id @default(uuid())
-  medicalRelation String        @ignore
-  cieCod          Int?
-  status          Boolean       @default(true)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  userId          Int           @unique
-  appointment     Appointment[]
-  diagnostics     Diagnostic[]
-  recipes         Recipe[]
-  medicalTests    MedicalTest[]
+  id           String        @id @default(uuid())
+  cieCod       Int?
+  status       Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  appointment  Appointment[]
+  diagnostics  Diagnostic[]
+  recipes      Recipe[]
+  medicalTests MedicalTest[]
 }
 
 enum TYPEVOUCHER {
