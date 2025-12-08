@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <definitions name="AppointmentService"
     targetNamespace="http://example.com/appointment"
     xmlns:tns="http://example.com/appointment"
@@ -6,28 +7,102 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
 
+    <types>
+        <xsd:complexType name="Appointment">
+            <xsd:sequence>
+                <xsd:element name="id" type="xsd:string" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="appointmentDate" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="patientId" type="xsd:string" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="status" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="totalServices" type="xsd:float" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="servicesDesc" type="xsd:string" minOccurs="0"
+                    maxOccurs="unbounded" />
+                <xsd:element name="doctorId" type="xsd:string" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="doctor" type="tns:DoctorData" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="patient" type="tns:PatientData" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="diagnostic" type="tns:Diagnostic" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="triage" type="tns:Triage" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="createdAt" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="updatedAt" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="payments" type="tns:Payment" minOccurs="0" maxOccurs="unbounded" />
+                <xsd:element name="recipe" type="tns:Recipe" minOccurs="0" maxOccurs="1" />
+                <xsd:element name="medicalTest" type="tns:MedicalTest" minOccurs="0"
+                    maxOccurs="unbounded" />
+            </xsd:sequence>
+            <xsd:complexType name="AppointmentList">
+                <xsd:sequence>
+                    <xsd:element name="triage" type="tns:Appointment" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:complexType>
+    </types>
+
+    <!-- Request -->
     <message name="getAllRequest">
         <part name="page" type="xsd:int" />
         <part name="limit" type="xsd:int" />
-        <part name="patientId" type="xsd:string" />
-        <part name="date" type="xsd:date" />
-        <part name="status" type="xsd:boolean" />
-        <part name="doctorId" type="xsd:string" />
+    </message>
+    <message name='getOneRequest'>
+        <part name="id" type="xsd:string" />
+    </message>
+    <message name='createRequest'>
+        <part name="appointment" type="tns:Appointment" />
+    </message>
+    <message name='updateRequest'>
+        <part name="appointment" type="tns:Appointment" />
+    </message>
+    <message name='deleteRequest'>
+        <part name="id" type="xsd:string" />
+    </message>
+    <!-- Responses -->
+    <message name="getAllResponse">
+        <part name="Appointments" type="tns:AppointmentList" />
+    </message>
+    <message name="getOneResponse">
+        <part name="Appointment" type="tns:Appointment" />
+    </message>
+    <message name="createResponse">
+        <part name="createdAppointment" type="tns:Appointment" />
+    </message>
+    <message name="updateResponse">
+        <part name="updatedAppointment" type="tns:Appointment" />
+    </message>
+    <message name="deleteResponse">
+        <part name="deletedAppointment" type="tns:Appointment" />
     </message>
 
-    <message name="getAllResponse">
-        <part name="appointments" type="xsd:string" />
-    </message>
 
     <portType name="AppointmentPort">
+        <!-- Get All Appointment -->
         <operation name="getAll">
             <input message="tns:getAllRequest" />
             <output message="tns:getAllResponse" />
+        </operation>
+        <!-- Get One Appointment -->
+        <operation name="getOne">
+            <input message="tns:getOneRequest" />
+            <output message="tns:getOneResponse" />
+        </operation>
+        <!-- Create Appointment -->
+        <operation name="create">
+            <input message="tns:createRequest" />
+            <output message="tns:createResponse" />
+        </operation>
+        <!-- Update Appointment -->
+        <operation name="update">
+            <input message="tns:updateRequest" />
+            <output message="tns:updateResponse" />
+        </operation>
+        <!-- Delete Appointment -->
+        <operation name="delete">
+            <input message="tns:deleteRequest" />
+            <output message="tns:deleteResponse" />
         </operation>
     </portType>
 
     <binding name="AppointmentBinding" type="tns:AppointmentPort">
         <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+        <!-- Get All Appointment -->
         <operation name="getAll">
             <soap:operation soapAction="getAll" />
             <input>
@@ -39,13 +114,23 @@
                     encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
             </output>
         </operation>
+        <!-- Get One Appointment -->
+        <operation name="getOne">
+            <soap:operation soapAction="getOne" />
+            <input>
+                <soap:body use="encoded" namespace="urn:AppointmentService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:AppointmentService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
     </binding>
-
     <service name="AppointmentService">
-        <documentation>Appointment SOAP API</documentation>
+        <documentation>Appointment API</documentation>
         <port name="AppointmentPort" binding="tns:AppointmentBinding">
-            <soap:address location="http://localhost:8000/soap/appointment" />
+            <soap:address location="http://localhost:8000/soap/Appointment" />
         </port>
     </service>
-
 </definitions>

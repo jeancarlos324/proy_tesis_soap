@@ -1,20 +1,125 @@
 <?xml version="1.0"?>
 
-<definitions name="AppointmentService"
-    targetNamespace="http://example.com/appointment"
-    xmlns:tns="http://example.com/appointment"
+<definitions name="DiagnosticService"
+    targetNamespace="http://example.com/diagnostic"
+    xmlns:tns="http://example.com/diagnostic"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
 
-    <portType name="PatientPort">
+    <types>
+        <xsd:complexType name="Diagnostic">
+            <xsd:sequence>
+                <xsd:element name="id" type="xsd:string" default="uuid()" />
+                <xsd:element name="anamnesis" type="xsd:string" maxOccurs="1" minOccurs="1" />
+                <xsd:element name="clinicalExam" type="xsd:string" maxOccurs="1" minOccurs="1" />
+                <xsd:element name="diagnostic" type="xsd:string" maxOccurs="unbounded" minOccurs="1" />
+                <xsd:element name="observations" type="xsd:string" maxOccurs="1" minOccurs="0" />
+                <xsd:element name="createdAt" type="xsd:dateTime" maxOccurs="1" minOccurs="1" />
+                <xsd:element name="updatedAt" type="xsd:dateTime" maxOccurs="1" minOccurs="1" />
+                <xsd:element name="appointmentId" type="xsd:string" maxOccurs="1" minOccurs="1" />
+                <xsd:element name="doctorId" type="xsd:string" maxOccurs="1" minOccurs="1" />
+            </xsd:sequence>
+            <xsd:complexType name="DiagnosticList">
+                <xsd:sequence>
+                    <xsd:element name="Diagnostic" type="tns:Diagnostic" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:complexType>
+    </types>
+    <!-- Request -->
+    <message name="getAllRequest">
+        <part name="page" type="xsd:int" />
+        <part name="limit" type="xsd:int" />
+    </message>
+    <message name='getOneRequest'>
+        <part name="id" type="xsd:string" />
+    </message>
+    <message name='createRequest'>
+        <part name="Diagnostic" type="tns:Diagnostic" />
+    </message>
+    <message name='updateRequest'>
+        <part name="Diagnostic" type="tns:Diagnostic" />
+    </message>
+    <message name='deleteRequest'>
+        <part name="id" type="xsd:string" />
+    </message>
+    <!-- Responses -->
+    <message name="getAllResponse">
+        <part name="Diagnostics" type="tns:DiagnosticList" />
+    </message>
+    <message name="getOneResponse">
+        <part name="Diagnostic" type="tns:Diagnostic" />
+    </message>
+    <message name="createResponse">
+        <part name="createdDiagnostic" type="tns:Diagnostic" />
+    </message>
+    <message name="updateResponse">
+        <part name="updatedDiagnostic" type="tns:Diagnostic" />
+    </message>
+    <message name="deleteResponse">
+        <part name="deletedDiagnostic" type="tns:Diagnostic" />
+    </message>
 
+    <portType name="DiagnosticPort">
+        <!-- Get All Diagnostic -->
+        <operation name="getAll">
+            <input message="tns:getAllRequest" />
+            <output message="tns:getAllResponse" />
+        </operation>
+        <!-- Get One Diagnostic -->
+        <operation name="getOne">
+            <input message="tns:getOneRequest" />
+            <output message="tns:getOneResponse" />
+        </operation>
+        <!-- Create Diagnostic -->
+        <operation name="create">
+            <input message="tns:createRequest" />
+            <output message="tns:createResponse" />
+        </operation>
+        <!-- Update Diagnostic -->
+        <operation name="update">
+            <input message="tns:updateRequest" />
+            <output message="tns:updateResponse" />
+        </operation>
+        <!-- Delete Diagnostic -->
+        <operation name="delete">
+            <input message="tns:deleteRequest" />
+            <output message="tns:deleteResponse" />
+        </operation>
     </portType>
 
-    <service name="PatientService">
-        <documentation>Patient SOAP API</documentation>
-        <port name="PatientPort" binding="tns:PatientBinding">
-            <soap:address location="http://localhost:8000/soap/patient" />
+    <binding name="DiagnosticBinding" type="tns:DiagnosticPort">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+        <!-- Get All Diagnostic -->
+        <operation name="getAll">
+            <soap:operation soapAction="getAll" />
+            <input>
+                <soap:body use="encoded" namespace="urn:DiagnosticService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:DiagnosticService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <!-- Get One Diagnostic -->
+        <operation name="getOne">
+            <soap:operation soapAction="getOne" />
+            <input>
+                <soap:body use="encoded" namespace="urn:DiagnosticService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:DiagnosticService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+    </binding>
+    <service name="DiagnosticService">
+        <documentation>Diagnostic API</documentation>
+        <port name="DiagnosticPort" binding="tns:DiagnosticBinding">
+            <soap:address location="http://localhost:8000/soap/diagnostic" />
         </port>
     </service>
 </definitions>

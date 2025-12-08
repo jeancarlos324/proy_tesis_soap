@@ -1,20 +1,131 @@
 <?xml version="1.0"?>
 
-<definitions name="AppointmentService"
+<definitions name="TriageService"
     targetNamespace="http://example.com/appointment"
     xmlns:tns="http://example.com/appointment"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
 
-    <portType name="PatientPort">
+    <types>
+        <xsd:complexType name="Triage">
+            <xsd:sequence>
+                <xsd:element name="id" type="xsd:string" />
+                <xsd:element name="id" type="xsd:string" />
+                <xsd:element name="weight" type="xsd:float" />
+                <xsd:element name="height" type="xsd:float" />
+                <xsd:element name="temperature" type="xsd:float" />
+                <xsd:element name="heartRate" type="xsd:int" />
+                <xsd:element name="bloodPressure" type="xsd:string" />
+                <xsd:element name="daysSick" type="xsd:int" />
+                <xsd:element name="sature" type="xsd:float" />
+                <xsd:element name="observations" type="xsd:string" minOccurs="0" nillable="true" />
+                <xsd:element name="appointmentId" type="xsd:string" />
+                <xsd:element name="ipss" type="xsd:int" minOccurs="0" nillable="true" />
+                <xsd:element name="createdAt" type="xsd:string" minOccurs="0" nillable="true" />
+                <xsd:element name="updatedAt" type="xsd:string" minOccurs="0" nillable="true" />
+            </xsd:sequence>
+            <xsd:complexType name="TriageList">
+                <xsd:sequence>
+                    <xsd:element name="triage" type="tns:Triage" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:complexType>
+    </types>
 
+    <!-- Request -->
+    <message name="getAllRequest">
+        <part name="page" type="xsd:int" />
+        <part name="limit" type="xsd:int" />
+    </message>
+    <message name='getOneRequest'>
+        <part name="id" type="xsd:string" />
+    </message>
+    <message name='createRequest'>
+        <part name="Triage" type="tns:Triage" />
+    </message>
+    <message name='updateRequest'>
+        <part name="Triage" type="tns:Triage" />
+    </message>
+    <message name='deleteRequest'>
+        <part name="id" type="xsd:string" />
+    </message>
+    <!-- Responses -->
+    <message name="getAllResponse">
+        <part name="Triages" type="tns:TriageList" />
+    </message>
+    <message name="getOneResponse">
+        <part name="Triage" type="tns:Triage" />
+    </message>
+    <message name="createResponse">
+        <part name="createdTriage" type="tns:Triage" />
+    </message>
+    <message name="updateResponse">
+        <part name="updatedTriage" type="tns:Triage" />
+    </message>
+    <message name="deleteResponse">
+        <part name="deletedTriage" type="tns:Triage" />
+    </message>
+
+    <portType name="TriagePort">
+        <!-- Get All Triage -->
+        <operation name="getAll">
+            <input message="tns:getAllRequest" />
+            <output message="tns:getAllResponse" />
+        </operation>
+        <!-- Get One Triage -->
+        <operation name="getOne">
+            <input message="tns:getOneRequest" />
+            <output message="tns:getOneResponse" />
+        </operation>
+        <!-- Create Triage -->
+        <operation name="create">
+            <input message="tns:createRequest" />
+            <output message="tns:createResponse" />
+        </operation>
+        <!-- Update Triage -->
+        <operation name="update">
+            <input message="tns:updateRequest" />
+            <output message="tns:updateResponse" />
+        </operation>
+        <!-- Delete Triage -->
+        <operation name="delete">
+            <input message="tns:deleteRequest" />
+            <output message="tns:deleteResponse" />
+        </operation>
     </portType>
 
-    <service name="PatientService">
-        <documentation>Patient SOAP API</documentation>
-        <port name="PatientPort" binding="tns:PatientBinding">
-            <soap:address location="http://localhost:8000/soap/patient" />
+    <binding name="TriageBinding" type="tns:TriagePort">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+        <!-- Get All Triage -->
+        <operation name="getAll">
+            <soap:operation soapAction="getAll" />
+            <input>
+                <soap:body use="encoded" namespace="urn:TriageService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:TriageService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+        <!-- Get One Triage -->
+        <operation name="getOne">
+            <soap:operation soapAction="getOne" />
+            <input>
+                <soap:body use="encoded" namespace="urn:TriageService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:TriageService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" />
+            </output>
+        </operation>
+    </binding>
+    <service name="TriageService">
+        <documentation>Triage API</documentation>
+        <port name="TriagePort" binding="tns:TriageBinding">
+            <soap:address location="http://localhost:8000/soap/Triage" />
         </port>
     </service>
 </definitions>

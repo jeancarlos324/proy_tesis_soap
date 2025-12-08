@@ -147,7 +147,7 @@
     <service name="PatientService">
         <documentation>Patient SOAP API</documentation>
         <port name="PatientPort" binding="tns:PatientBinding">
-            <soap:address location="http://localhost:8000/soap/Patient" />
+            <soap:address location="http://localhost:8000/soap/patient" />
         </port>
     </service>
 
