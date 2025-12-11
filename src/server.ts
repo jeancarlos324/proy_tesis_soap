@@ -2,6 +2,7 @@ import http, { IncomingMessage, ServerResponse } from 'http';
 import { config } from 'dotenv';
 import pc from 'picocolors';
 import SoapPahMain from './core/soap.main';
+import SeederServer from './seeds/seed-test';
 config();
 class Server {
   private httpServer!: http.Server;
@@ -34,6 +35,11 @@ class Server {
       }
       SoapPahMain.loader(this.httpServer);
     });
+  }
+
+  public async cseed() {
+    const seeder = new SeederServer();
+    await seeder.run();
   }
 }
 

@@ -1,3 +1,4 @@
+import SeederServer from './seeds/seed-test';
 import Server from './server';
 
 // import { UserSeeder } from './seeds/seed';
@@ -5,5 +6,7 @@ import Server from './server';
 const server = new Server();
 server.listen();
 
-// const runner = new UserSeeder(8, 1, 8);
-// runner.run();
+(async () => {
+  const seed = new SeederServer();
+  await seed.run();
+})();
