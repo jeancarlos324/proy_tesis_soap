@@ -4,11 +4,15 @@ import { PatientQuery } from '../queries';
 import { IPatientCreateForm, IPatientParams } from '../types/patient';
 import ExpressUtils from '../utils/express.utils';
 import { AppError } from '../core/AppError';
+import pc from 'picocolors';
 
 export default class PatientService {
   private static prisma = prisma;
   static async getAll(args: IPatientParams) {
     const filters = [];
+    //------------------- Response time test -------------------------------
+    const startTimeRes = process.hrtime();
+    //----------------------------------------------------------------------
     const { offset, limit: take = 10, page } = args || {};
     const skip = ExpressUtils.pagination({ limit: take, offset, page });
     if (args.lastName)
@@ -35,14 +39,30 @@ export default class PatientService {
       take,
       skip,
     });
+    //------------------- Response time test -------------------------------
+    const endTimeRes = process.hrtime(startTimeRes);
+    console.log(
+      pc.bgGreen(` Response time: ${endTimeRes[0] * 1e9 + endTimeRes[1]}`),
+    );
+    //----------------------------------------------------------------------
     return patients;
   }
   static async getOne(id: string) {
-    if (!RegexUtils.uuid(id)) throw new AppError('id is required', 400);
+    // if (!RegexUtils.uuid(id)) throw new AppError('id is required', 400);
+    //------------------- Response time test -------------------------------
+    const startTimeRes = process.hrtime();
+    //----------------------------------------------------------------------
     const patient = await this.prisma.patientData.findUnique({
       where: { id },
       select: PatientQuery.getById,
     });
+    //------------------- Response time test -------------------------------
+    const endTimeRes = process.hrtime(startTimeRes);
+    console.log(
+      pc.bgGreen(` Response time: ${endTimeRes[0] * 1e9 + endTimeRes[1]}`),
+    );
+    //----------------------------------------------------------------------
+
     return patient;
   }
 

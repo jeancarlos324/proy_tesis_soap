@@ -12,7 +12,7 @@ export interface IAppointmentCreateForm {
   patientId: string;
   status: boolean;
   totalServices: number;
-  servicesDesc: string[];
+  servicesDesc: string;
   doctorId: string;
 }
 

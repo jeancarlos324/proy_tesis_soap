@@ -26,29 +26,12 @@ export default class PatientQuery {
           createdAt: true,
           doctor: { select: { id: true, cieCod: true } },
           diagnostic: {
-            select: DiagnosticQuery.getAll,
+            select: { id: true, doctorId: true },
           },
-          triage: {
-            select: TriageQuery.getAll,
-          },
-          recipe: {
-            select: {
-              observations: true,
-              id: true,
-              createdAt: true,
-              doctorId: true,
-              recipesDesc: true,
-            },
-          },
-          medicalTest: {
-            select: {
-              id: true,
-              testDate: true,
-              observations: true,
-              resultText: true,
-              resultValue: true,
-            },
-          },
+          triage: { select: { id: true } },
+          recipe: { select: { id: true } },
+          medicalTest: { select: { id: true } },
+          appointmentDate: true,
         },
       },
     });
@@ -68,15 +51,22 @@ export default class PatientQuery {
       physicalHistory: true,
       job: true,
       numberPhone: true,
-      appointments: {
-        include: {
-          doctor: true,
-          medicalTest: true,
-          diagnostic: true,
-          recipe: true,
-          triage: true,
-        },
-      },
+      location: true,
+      province: true,
+      // appointments: {
+      //   select: {
+      //     id: true,
+      //     createdAt: true,
+      //     doctor: { select: { id: true, cieCod: true } },
+      //     diagnostic: {
+      //       select: { id: true, doctorId: true },
+      //     },
+      //     triage: { select: { id: true } },
+      //     recipe: { select: { id: true } },
+      //     medicalTest: { select: { id: true } },
+      //     appointmentDate: true,
+      //   },
+      // },
     });
     return query;
   }

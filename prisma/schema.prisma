@@ -33,6 +33,10 @@ model PatientData {
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
   appointments     Appointment[]
+  triage           Triage[]
+  payments         Payment[]
+  recipe           Recipe[]
+  medicalTest      MedicalTest[]
 
   @@index([firstName, lastName, nationalIdentity])
 }
@@ -43,7 +47,7 @@ model Appointment {
   patientId       String
   status          Boolean       @default(false)
   totalServices   Float
-  servicesDesc    String[]
+  servicesDesc    String
   doctorId        String        @map("doctor_id")
   doctor          DoctorData    @relation(fields: [doctorId], references: [id])
   patient         PatientData   @relation(fields: [patientId], references: [id])
@@ -57,20 +61,23 @@ model Appointment {
 }
 
 model Triage {
-  id            String      @id @default(uuid())
-  weight        Decimal     @db.Decimal(5, 2)
-  height        Decimal     @db.Decimal(4, 2)
-  temperature   Decimal     @db.Decimal(4, 1)
-  heartRate     Float       @map("heart_rate")
-  ipss          Float?      @default(0)
-  bloodPressure String      @map("blood_pressure")
-  daysSick      Int         @default(0)
-  sature        Int         @default(0)
-  observations  String?     @default("")
-  appointmentId String      @unique
-  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id          String  @id @default(uuid())
+  weight      Decimal @db.Decimal(5, 2)
+  height      Decimal @db.Decimal(4, 2)
+  temperature Decimal @db.Decimal(4, 1)
+
+  heartRate     Float        @map("heart_rate")
+  ipss          Float?       @default(0)
+  bloodPressure String       @map("blood_pressure")
+  daysSick      Int          @default(0)
+  sature        Int          @default(0)
+  observations  String?      @default("")
+  appointmentId String       @unique
+  appointment   Appointment  @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  patientData   PatientData? @relation(fields: [patientDataId], references: [id])
+  patientDataId String?
 }
 
 model Payment {
@@ -82,13 +89,15 @@ model Payment {
   updatedAt     DateTime     @updatedAt
   appointmentId String       @map("appointment_id")
   appointment   Appointment  @relation(fields: [appointmentId], references: [id])
+  patientData   PatientData? @relation(fields: [patientDataId], references: [id])
+  patientDataId String?
 }
 
 model Diagnostic {
   id            String      @id @default(uuid())
   anamnesis     String      @map("anamnesis") @db.VarChar(500)
   clinicalExam  String
-  diagnostic    String[]
+  diagnostic    String
   observations  String?     @default("")
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -100,49 +109,55 @@ model Diagnostic {
 }
 
 model MedicalTest {
-  id             Int         @id @default(autoincrement())
+  id             String       @id @default(uuid())
   type           String
   code           String?
-  status         String      @default("pending")
-  observations   String?     @default("")
+  status         String       @default("pending")
+  observations   String?      @default("")
   resultText     String?
   resultValue    Float?
   referenceRange String?
   testDate       DateTime?
   deliveredAt    DateTime?
   attachments    Json?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  appointmentId  String      @unique
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  appointmentId  String       @unique
   doctorId       String
-  doctor         DoctorData  @relation(fields: [doctorId], references: [id])
-  appointment    Appointment @relation(fields: [appointmentId], references: [id])
+  doctor         DoctorData   @relation(fields: [doctorId], references: [id])
+  appointment    Appointment  @relation(fields: [appointmentId], references: [id])
+  patientData    PatientData? @relation(fields: [patientDataId], references: [id])
+  patientDataId  String?
 }
 
 model Recipe {
-  id            Int         @id @default(autoincrement())
-  observations  String?     @default("")
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  appointmentId String      @unique
-  diagnsticId   String      @unique
-  recipesDesc   Json[]
+  id            String       @id @default(uuid())
+  observations  String?      @default("")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  appointmentId String       @unique
+  diagnosticId  String       @unique
+  recipesDesc   Json
   doctorId      String
-  doctor        DoctorData  @relation(fields: [doctorId], references: [id])
-  appointment   Appointment @relation(fields: [appointmentId], references: [id])
-  diagnostic    Diagnostic  @relation(fields: [diagnsticId], references: [id])
+  doctor        DoctorData   @relation(fields: [doctorId], references: [id])
+  appointment   Appointment  @relation(fields: [appointmentId], references: [id])
+  diagnostic    Diagnostic   @relation(fields: [diagnosticId], references: [id])
+  patientData   PatientData? @relation(fields: [patientDataId], references: [id])
+  patientDataId String?
 }
 
 model DoctorData {
-  id           String        @id @default(uuid())
-  cieCod       Int?
-  status       Boolean       @default(true)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  appointment  Appointment[]
-  diagnostics  Diagnostic[]
-  recipes      Recipe[]
-  medicalTests MedicalTest[]
+  id              String        @id @default(uuid())
+  medicalRelation String        @ignore
+  cieCod          Int?
+  status          Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  userId          String        @unique
+  appointment     Appointment[]
+  diagnostics     Diagnostic[]
+  recipes         Recipe[]
+  medicalTests    MedicalTest[]
 }
 
 enum TYPEVOUCHER {

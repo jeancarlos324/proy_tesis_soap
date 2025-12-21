@@ -7,7 +7,7 @@ export interface IDiagnosticParams extends IPagination {
 export interface IDiagnosticForm {
   anamnesis: string;
   observations: string;
-  diagnostic: string[];
+  diagnostic: string;
   clinicalExam: string;
   appointmentId: string;
   doctorId: string;
